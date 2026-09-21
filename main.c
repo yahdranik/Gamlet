@@ -3,8 +3,6 @@
 #include "oper_with_file.c"
 #include "oper_with_str.c"
 
-//TODO - логи 
-
 int main()
 {
     struct FileData file_info = read_file_and_get_data();

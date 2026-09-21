@@ -15,13 +15,13 @@ ssize_t get_file_size(const char* NAME)
 
 struct FileData read_file_and_get_data()
 {
-    FILE* text = fopen(FILE_NAME, "r");
+    FILE* text = fopen(INPUT_FILE_NAME, "r");
     if (text == NULL) 
     {
         return {};
     }
 
-    ssize_t SIZE_OF_FILE = get_file_size(FILE_NAME);
+    ssize_t SIZE_OF_FILE = get_file_size(INPUT_FILE_NAME);
 
     if (SIZE_OF_FILE == EMPTY_FILE)
     {
@@ -60,7 +60,7 @@ struct FileData read_file_and_get_data()
 
 void print_into_file(struct FileData data)
 {
-    FILE* result = fopen("Onegin_result.txt", "w");
+    FILE* result = fopen(OUTPUT_FILE_NAME, "w");
 
     fprintf(result, "\n-----------------------------------------------------------------------------------\n");
     fprintf(result, "\nSORT FOR BEGIN\n");

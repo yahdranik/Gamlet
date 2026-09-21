@@ -17,7 +17,7 @@ int slize_to_string(char* array, char** sliced_array, size_t len_array)
     sliced_array[0] = array;
     size_t line_number = 1;
     
-    for (size_t i = 0; i < len_array; i++)
+    for (size_t i = 0; i < len_array - 1; i++)
     {
         if (array[i] == '\n')
         {

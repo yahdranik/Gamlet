@@ -52,4 +52,5 @@ void swap(void* a, void* b, size_t size_element);
 
 const int MAX_LEN_STR = 100;
 const int MAX_LINES = 1000;
-const char* FILE_NAME = "Onegin.txt";
+const char* INPUT_FILE_NAME = "Onegin.txt";
+const char* OUTPUT_FILE_NAME = "Onegin_result.txt";
