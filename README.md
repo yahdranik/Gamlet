@@ -1,6 +1,6 @@
 # Onegin
 
-A robust C program designed to read text from a file, split it into individual lines, and perform custom sorting operations—specifically sorting lines alphabetically from the beginning and from the end (ignoring punctuation).
+A robust C program designed to read text from a file, split it into individual lines, and perform custom sorting operations - specifically sorting lines alphabetically from the beginning and from the end (ignoring punctuation).
 
 ## Features
 
