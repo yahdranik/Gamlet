@@ -4,6 +4,7 @@
 #include <ctype.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <cstdint>
 
 #define MY_RED_AND_BOLD        "\033[1;31m"
 #define MY_END_CUSTOM          "\033[0m"
@@ -46,6 +47,8 @@ int slize_to_string(char* array, char** sliced_array, size_t len_array);
 size_t count_entry_in_string(char* array, size_t len_array, char symbol);
 ssize_t get_file_size(const char* NAME);
 void* my_memcpy(void* destination, const void* source, size_t n );
+void quick_sort(void* array, size_t len_array, size_t size_element, int (*compare)(const void* a, const void* b));
+void swap(void* a, void* b, size_t size_element);
 
 const int MAX_LEN_STR = 100;
 const int MAX_LINES = 1000;
