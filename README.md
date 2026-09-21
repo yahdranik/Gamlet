@@ -20,9 +20,11 @@ A robust C program designed to read text from a file, split it into individual l
 Make sure you have a C compiler installed (such as `gcc`).
 
 1. Compile the project:
-   ```.\myscript.bat
+   ```
+   .\myscript.bat
    ```
 
 2. Run the executable:
-   ``` .\mimimi.exe 
+   ``` 
+   .\mimimi.exe 
    ```
