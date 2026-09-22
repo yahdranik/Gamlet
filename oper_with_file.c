@@ -1,16 +1,16 @@
 
-ssize_t get_file_size(const char* NAME)
+ssize_t get_file_size(const char* name)
 {
     struct stat file_info = {};
-    stat(NAME, &file_info);
-    ssize_t SIZE_OF_FILE = file_info.st_size;
+    stat(name, &file_info);
+    ssize_t size_of_file = file_info.st_size;
 
-    if (SIZE_OF_FILE == -1 || SIZE_OF_FILE == 0)
+    if (size_of_file == -1 || size_of_file == 0)
     {
         return EMPTY_FILE;
     }
 
-    return SIZE_OF_FILE;
+    return size_of_file;
 }
 
 struct FileData read_file_and_get_data()
@@ -21,21 +21,17 @@ struct FileData read_file_and_get_data()
         return {};
     }
 
-    ssize_t SIZE_OF_FILE = get_file_size(INPUT_FILE_NAME);
-
-    if (SIZE_OF_FILE == EMPTY_FILE)
-    {
-        return {};
-    }
+    size_t SIZE_OF_FILE = get_file_size(INPUT_FILE_NAME);
+    if (SIZE_OF_FILE == EMPTY_FILE) {return {};}
 
     char* original_text = (char*) calloc(SIZE_OF_FILE, sizeof(char));
     if (original_text == NULL) {return {};}
 
-    SIZE_OF_FILE = fread(original_text, sizeof(char), SIZE_OF_FILE + 1, text);
+    SIZE_OF_FILE = fread(original_text, sizeof(char), SIZE_OF_FILE, text) + 1;
 
     fclose(text);
 
-    ssize_t count_of_strings = count_entry_in_string(original_text, SIZE_OF_FILE, '\n') + 1;
+    size_t count_of_strings = count_entry_in_string(original_text, '\n') + 1;
 
     char** list_index_1 = (char**) calloc(count_of_strings, sizeof(char*));
     if (list_index_1 == NULL) {return {};}
@@ -58,38 +54,46 @@ struct FileData read_file_and_get_data()
     return file_info;
 }
 
-void print_into_file(struct FileData data)
+int print_into_file(const struct FileData data)
 {
     FILE* result = fopen(OUTPUT_FILE_NAME, "w");
+    if (result == NULL)
+    {
+        fclose(result);
+        return FILE_NOT_OPEN;
+    }
 
     fprintf(result, "\n-----------------------------------------------------------------------------------\n");
     fprintf(result, "\nSORT FOR BEGIN\n");
     fprintf(result, "\n-----------------------------------------------------------------------------------\n\n");
 
-    print_strings_into_file(result, data.list_indexes_1, data.count_of_strings);
+    print_strings_into_file(result, (const char**) data.list_indexes_1, data.count_of_strings);
 
     fprintf(result, "\n-----------------------------------------------------------------------------------\n");
     fprintf(result, "\nSORT FOR END\n");
     fprintf(result, "\n-----------------------------------------------------------------------------------\n\n");
 
-    print_strings_into_file(result, data.list_indexes_2, data.count_of_strings);
+    print_strings_into_file(result, (const char**) data.list_indexes_2, data.count_of_strings);
 
     fprintf(result, "\n-----------------------------------------------------------------------------------\n");
     fprintf(result, "\nTHE ORIGINAL\n");
     fprintf(result, "\n-----------------------------------------------------------------------------------\n\n");
 
-    print_strings_into_file(result, data.list_indexes_3, data.count_of_strings);
+    print_strings_into_file(result, (const char**) data.list_indexes_3, data.count_of_strings);
 
     fclose(result);
+    return 0;
 }
 
-void print_strings_into_file(FILE* filestream, char** array, size_t size)
+int print_strings_into_file(FILE* filestream, const char** array, size_t size)
 {
-    for(size_t i = 0; i < size; i++)
+    for (size_t i = 0; i < size; i++)
     {
         if (array[i] != NULL && *array[i] != '\0')
         {
             fprintf(filestream, "%s\n", array[i]);
         }
     }
+
+    return 0;
 }

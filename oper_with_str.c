@@ -1,13 +1,17 @@
-
-size_t count_entry_in_string(char* array, size_t len_array, char symbol)
+//TODO переписать для strchr
+size_t count_entry_in_string(char* array, char symbol)
 {
     size_t counter = 0;
-    for (size_t i = 0; i < len_array - 1; i++)
+    char* array_copy = array;
+    while (true)
     {
-        if (array[i] == symbol)
+        char* entry = strchr(array_copy, symbol);
+        if (entry == NULL)
         {
-            counter++;
+            break;
         }
+
+        array_copy = entry + 1;
     }
     return counter;
 }
@@ -34,7 +38,6 @@ int slize_to_string(char* array, char** sliced_array, size_t len_array)
 
     return 0;
 }
-
 
 
 int strcmp_letters_only(const char* string_1, const char* string_2)

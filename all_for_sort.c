@@ -6,7 +6,7 @@ int compare_for_beginning_strings(const void* a, const void* b)
 
     return strcmp_letters_only(*elem_1, *elem_2);
 }
-
+//TODO убрать реверс и написать еще strcmp
 int compare_for_end_strings(const void* a, const void* b)
 {
     char** elem_1 = (char**) a;
