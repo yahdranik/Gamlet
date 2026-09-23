@@ -1,26 +1,41 @@
+#include "Onegin.h"
 
 int compare_for_beginning_strings(const void* a, const void* b)
 {
-    const char* const* elem_1 = (const char* const*) a;
-    const char* const* elem_2 = (const char* const*) b;
+    const StringData elem_1 = *(const StringData*) a;
+    const StringData elem_2 = *(const StringData*) b;
 
-    return strcmp_letters_only(*elem_1, *elem_2);
+    return strcmp_letters_from_beginning(elem_1.begin_pointer, elem_1.length, elem_2.begin_pointer, elem_2.length);
 }
-//TODO убрать реверс и написать еще strcmp
+
 int compare_for_end_strings(const void* a, const void* b)
 {
-    char** elem_1 = (char**) a;
-    char** elem_2 = (char**) b;
+    const StringData elem_1 = *(const StringData*) a;
+    const StringData elem_2 = *(const StringData*) b;
 
-    my_strrev(*elem_1);
-    my_strrev(*elem_2);
+    return strcmp_letters_from_end(elem_1.begin_pointer, elem_1.length, elem_2.begin_pointer, elem_2.length);
+}
 
-    int value = strcmp_letters_only(*elem_1, *elem_2);
+int compare_for_indexes(const void* a, const void* b)
+{
+    const StringData elem_1 = *(const StringData*) a;
+    const StringData elem_2 = *(const StringData*) b;
 
-    my_strrev(*elem_1);
-    my_strrev(*elem_2);
+    return elem_1.index > elem_2.index;
+}
 
-    return value;
+
+void swap(void* a, void* b, size_t size_element)
+{
+    uint8_t* elem_1 = (uint8_t*)a;
+    uint8_t* elem_2 = (uint8_t*)b;
+    
+    for (size_t i = 0; i < size_element; i++) 
+    {
+        uint8_t temp = elem_1[i];
+        elem_1[i] = elem_2[i];
+        elem_2[i] = temp;
+    }
 }
 
 void quick_sort(void* array, size_t len_array, size_t size_element, int (*compare)(const void* a, const void* b))
@@ -61,15 +76,3 @@ void quick_sort(void* array, size_t len_array, size_t size_element, int (*compar
     quick_sort(right + size_element, len_array - (right - ptr) / size_element - 1, size_element, compare);
 }
 
-void swap(void* a, void* b, size_t size_element)
-{
-    uint8_t* elem_1 = (uint8_t*)a;
-    uint8_t* elem_2 = (uint8_t*)b;
-    
-    for (size_t i = 0; i < size_element; i++) 
-    {
-        uint8_t temp = elem_1[i];
-        elem_1[i] = elem_2[i];
-        elem_2[i] = temp;
-    }
-}

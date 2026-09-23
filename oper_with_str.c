@@ -1,152 +1,127 @@
-//TODO переписать для strchr
+#include <stdio.h>
 size_t count_entry_in_string(char* array, char symbol)
 {
     size_t counter = 0;
     char* array_copy = array;
-    while (true)
+    char* entry = strchr(array_copy, symbol);
+
+    while (entry != NULL)
     {
-        char* entry = strchr(array_copy, symbol);
-        if (entry == NULL)
+        counter += 1;
+        array_copy = entry + 1;
+        entry = strchr(array_copy, symbol);
+    }
+
+    return counter;
+}
+
+void print_struct(StringData* str, size_t len)
+{
+    for (size_t i = 0; i < len; i++)
+    {   
+        printf("%d\n", str[i].index);
+        printf("%s\n", str[i].begin_pointer);
+        printf("%lld\n", str[i].length);
+    }
+}
+
+int get_string_data(StringData* data_strings, char* array, size_t len_array)
+{
+    size_t line_number = 0;
+    char* begin_pointer = array;
+
+    for (size_t i = 0; i < len_array; i++)
+    {
+        if (array[i] == '\n')
+        {
+            size_t length = (size_t) (array + i - begin_pointer);
+
+            if (length > 0 && begin_pointer[length - 1] == '\r')
+            {
+                length -= 1;
+                begin_pointer[length] = '\0';
+            }
+
+            else
+            {
+                array[i] = '\0';
+            }
+
+            data_strings[line_number] = (StringData) {(int) line_number, begin_pointer, length};
+            begin_pointer = array + i + 1;
+            line_number += 1;
+        }
+    }
+}
+
+int strcmp_letters_from_beginning(const char* string_1, size_t len_1, const char* string_2, size_t len_2)
+{
+    size_t pointer_1 = 0;
+    size_t pointer_2 = 0;
+
+    while (pointer_1 < len_1 && pointer_2 < len_2)
+    {
+        while (pointer_1 < len_1 && !isalpha((unsigned char) string_1[pointer_1]))
+        {
+            pointer_1 += 1;
+        }
+
+        while (pointer_2 < len_2 && !isalpha((unsigned char) string_2[pointer_2]))
+        {
+            pointer_2 += 1;
+        }
+
+        if (pointer_1 >= len_1 || pointer_2 >= len_2)
         {
             break;
         }
 
-        array_copy = entry + 1;
-    }
-    return counter;
-}
+        int symbol_1 = tolower((unsigned char) string_1[pointer_1]);
+        int symbol_2 = tolower((unsigned char) string_2[pointer_2]);
 
-int slize_to_string(char* array, char** sliced_array, size_t len_array) 
-{
-    sliced_array[0] = array;
-    size_t line_number = 1;
-    
-    for (size_t i = 0; i < len_array - 1; i++)
-    {
-        if (array[i] == '\n')
+        if (symbol_1 != symbol_2)
         {
-            array[i] = '\0';
-            sliced_array[line_number] = array + i + 1;
-            line_number += 1;
+            return symbol_1 - symbol_2;
         }
-    }
 
-    if (line_number == 1)
-    {
-        return NOT_SLICED;
+        pointer_1 += 1;
+        pointer_2 += 1;
     }
-
     return 0;
 }
 
-
-int strcmp_letters_only(const char* string_1, const char* string_2)
+int strcmp_letters_from_end(const char* string_1, size_t len_1, const char* string_2, size_t len_2)
 {
+    size_t pointer_1 = len_1;
+    size_t pointer_2 = len_2;
 
-    const char* pointer_1 = string_1;
-    const char* pointer_2 = string_2;
-
-    while (*pointer_1 != '\n' && *pointer_2 != '\n')
+    while (pointer_1 > 0 && pointer_2 > 0)
     {
-        while (!isalpha(*pointer_1) && *pointer_1 != '\n')
+        while (pointer_1 > 0 && !isalpha((unsigned char) string_1[pointer_1 - 1]))
         {
-            pointer_1++;
+            pointer_1 -= 1;
         }
 
-        while (!isalpha(*pointer_2) && *pointer_2 != '\n')
+        while (pointer_2 > 0 && !isalpha((unsigned char) string_2[pointer_2 - 1]))
         {
-            pointer_2++;
-        }
-        if (*pointer_1 != *pointer_2)
-        {
-            return (int) *pointer_1 - (int) *pointer_2;
+            pointer_2 -= 1;
         }
 
-        pointer_1++;
-        pointer_2++;
+        if (pointer_1 == 0 || pointer_2 == 0)
+        {
+            break;
+        }
+
+        int symbol_1 = tolower((unsigned char) string_1[pointer_1 - 1]);
+        int symbol_2 = tolower((unsigned char) string_2[pointer_2 - 1]);
+
+        if (symbol_1 != symbol_2)
+        {
+            return symbol_1 - symbol_2;
+        }
+
+        pointer_1 -= 1;
+        pointer_2 -= 1;
     }
-
     return 0;
 }
-
-char* my_strrev(char* string)
-{
-    if (string == NULL) 
-    {
-        return NULL;
-    }
-
-    size_t length_of_string = my_strlen(string);
-    char help_cell = 0;
-
-    for (size_t i = 0; i < length_of_string / 2; i++)
-    {
-        help_cell = string[i];
-        string[i] = string[length_of_string - i - 1];
-        string[length_of_string - i - 1] = help_cell;
-    }
-    
-    return string;
-}
-
-size_t my_strlen(const char* string)
-{
-    if (string == NULL)
-    {
-        return 0;
-    }
-
-    size_t count_of_symbols = 0;
-    while (string[count_of_symbols] != '\0' && string[count_of_symbols] != '\n')
-    {
-        count_of_symbols += 1;
-    }
-    return count_of_symbols;
-}
-
-void* my_memcpy(void* destination, const void* source, size_t n)
-{
-    size_t cursor = 0;
-    if (destination == NULL || source == NULL || n == 0)
-    {
-        return NULL;
-    }
-
-    uint64_t* destination_1 = (uint64_t*) destination;
-    uint64_t* source_1 = (uint64_t*) source;
-
-    for (size_t i = 0; i <= n / sizeof(uint64_t); i++)
-    {
-        destination_1[i] = source_1[i];
-        cursor = i;
-    }
-    n = n % sizeof(uint64_t);
-
-    if (n >= 4)
-    {
-        uint32_t* destination_2 = (uint32_t*) destination;
-        uint32_t* source_2 = (uint32_t*) source;
-        destination_2[cursor * 2 + 1] = source_2[cursor * 2 + 1];
-        cursor = cursor * 2 + 1;
-    }
-    n = n % sizeof(uint32_t);
-
-    if (n >= 2)
-    {
-        uint16_t* destination_3 = (uint16_t*) destination;
-        uint16_t* source_3 = (uint16_t*) source;
-        destination_3[cursor * 2 + 1] = source_3[cursor * 2 + 1];
-        cursor = cursor * 2 + 1;
-    }
-    n = n % sizeof(uint16_t);
-
-    if(n >= 1)
-    {
-        uint8_t* destination_4 = (uint8_t*) destination;
-        uint8_t* source_4 = (uint8_t*) source;
-        destination_4[cursor * 2 + 1] = source_4[cursor * 2 + 1];     
-    }
-
-    return (void*) destination;
-}
-
