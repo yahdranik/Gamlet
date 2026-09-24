@@ -1,6 +1,5 @@
-
-#include <fcntl.h>
-#include <unistd.h>
+#include "oper_with_str.h"
+#include "oper_with_file.h"
 
 ssize_t get_file_size(const char* NAME)
 {
@@ -10,7 +9,8 @@ ssize_t get_file_size(const char* NAME)
 
     if (size_of_file == -1 || size_of_file == 0)
     {
-        return EMPTY_FILE;
+        perror("Size unvalible\n");
+        return UNVALIBLE_FILE_SIZE;
     }
 
     return size_of_file;
@@ -18,21 +18,21 @@ ssize_t get_file_size(const char* NAME)
 
 struct FileData read_file_and_get_data(const char* FILE_NAME)
 {
-    int text = open(FILE_NAME, O_RDONLY);
-    if (text == -1) {return {};}
+    FILE* text = fopen(FILE_NAME, "r");
+    if (text == NULL) { perror("File not open\n"); return {}; }
 
     size_t size_of_file = get_file_size(FILE_NAME);
-    if (size_of_file == EMPTY_FILE) {close(text); return {};}
-    printf("%lld\n", size_of_file);
-    char* original_text = (char*) calloc(size_of_file + 1, sizeof(char));
-    if (original_text == NULL) {close(text); return {};}
+    if (size_of_file == UNVALIBLE_FILE_SIZE) { return {}; }
 
-    size_t bytes_read = read(text, original_text, size_of_file);
-    if (bytes_read == -1) {close(text); FREE_MASS(original_text); return {};}
-    printf("%lld\n", bytes_read);
+    char* original_text = (char*) calloc(size_of_file + 1, sizeof(char));
+    if (original_text == NULL) { fclose(text); return {}; }
+
+    ssize_t bytes_read = fread(original_text, sizeof(char), size_of_file, text);
+    if (bytes_read == -1) { fclose(text); FREE_MASS(original_text); perror("File do not read\n"); return {}; }
+
     original_text[bytes_read] = '\0';
 
-    close(text);
+    fclose(text);
 
     size_t count_of_strings = count_entry_in_string(original_text, '\n');
 
@@ -41,9 +41,9 @@ struct FileData read_file_and_get_data(const char* FILE_NAME)
         original_text[bytes_read - 1] = '\n';
         count_of_strings += 1;
     }
-    printf("%lld\n", count_of_strings);
-    struct FileData file_info = {bytes_read, count_of_strings, original_text};
-    printf("%s\n", file_info.original_text);
+
+    struct FileData file_info = {(size_t) bytes_read, count_of_strings, original_text};
+
     return file_info;
 }
 
@@ -60,40 +60,30 @@ int print_strings_into_file(FILE* filestream, StringData* array, size_t size)
     return 0;
 }
 
-// TODO проверка может ли fprintf еще выводить в файл 
-int print_into_file(const char* name, const FileData file_info, StringData* array, int mode)
+int print_into_file(FILE* filestream, const FileData file_info, StringData* array, int mode)
 {
-    FILE* result = fopen(name, "a");
-
-    if (result == NULL) //TODO написать почему файл не открылся
-    {
-        fclose(result);
-        return FILE_NOT_OPEN;
-    }
-
     if (mode == SORT_FOR_BEGIN)
     {    
-        fprintf(result, "\n-----------------------------------------------------------------------------------\n\n");
-        fprintf(result, "SORT FOR BEGIN\n");
-        fprintf(result, "\n-----------------------------------------------------------------------------------\n\n");
+        fprintf(filestream, "\n-----------------------------------------------------------------------------------\n\n");
+        fprintf(filestream, "SORT FOR BEGIN\n");
+        fprintf(filestream, "\n-----------------------------------------------------------------------------------\n\n");
     }
 
     else if (mode == SORT_FOR_END)
     {    
-        fprintf(result, "\n-----------------------------------------------------------------------------------\n\n");
-        fprintf(result, "SORT FOR END\n");
-        fprintf(result, "\n-----------------------------------------------------------------------------------\n\n");
+        fprintf(filestream, "\n-----------------------------------------------------------------------------------\n\n");
+        fprintf(filestream, "SORT FOR END\n");
+        fprintf(filestream, "\n-----------------------------------------------------------------------------------\n\n");
     }
     
     else if (mode == ORIGINAL)
     {    
-        fprintf(result, "\n-----------------------------------------------------------------------------------\n\n");
-        fprintf(result, "THE ORIGINAL\n");
-        fprintf(result, "\n-----------------------------------------------------------------------------------\n\n");
+        fprintf(filestream, "\n-----------------------------------------------------------------------------------\n\n");
+        fprintf(filestream, "THE ORIGINAL\n");
+        fprintf(filestream, "\n-----------------------------------------------------------------------------------\n\n");
     }
 
-    print_strings_into_file(result, array, file_info.count_of_strings);
+    print_strings_into_file(filestream, array, file_info.count_of_strings);
 
-    fclose(result);
     return 0;
 }

@@ -1,4 +1,5 @@
-#include "Onegin.h"
+#include "all_for_sort.h"
+#include "oper_with_str.h"
 
 int compare_for_beginning_strings(const void* a, const void* b)
 {
