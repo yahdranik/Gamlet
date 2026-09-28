@@ -8,10 +8,9 @@
 #include <sys/stat.h>
 #include <cstdint>
 
-#define FREE_MASS(array) do {                           \
+#define FREE_MASS(array)                                \
     free(array);                                        \
-    array = NULL;                                       \
-} while(0)
+    array = NULL;                                       
 
 enum Mode
 {
@@ -24,7 +23,9 @@ enum Erros
 {
     UNVALIBLE_FILE_SIZE,
     FILE_NOT_OPEN,
-    NOT_ALLOCATE
+    NOT_ALLOCATE,
+    INCORRECT_MODE_FOR_PRINT,
+    DATA_NOT_GET
 };
 
 struct FileData

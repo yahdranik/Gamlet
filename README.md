@@ -9,12 +9,6 @@ A robust C program designed to read text from a file, split it into individual l
 * **End Sorting:** Sorts the lines starting from their endings (useful for rhyming dictionaries or poetic analysis), intelligently skipping non-letter characters.
 * **Result Export:** Writes the original text, the forward-sorted text, and the end-sorted text back into a clean output file.
 
-## Project Structure
-
-* `main.c` - Entry point, buffer allocation, line pointer setup, and program cleanup.
-* `all_for_sort.c` - Core sorting logic, including custom `qsort` implementation, string comparisons, and character filtering.
-* `all_for_sort.h` - Header file containing function prototypes and structure definitions.
-
 ## Compilation and Usage
 
 Make sure you have a C compiler installed (such as `gcc`).

@@ -26,21 +26,59 @@ int main()
         return NOT_ALLOCATE;
     }
     
-    get_string_data(array_to_sort, file_info.original_text, file_info.size_of_file);
+    int res_get_data = get_string_data(array_to_sort, file_info.original_text, file_info.size_of_file);
+    if (res_get_data == -1)
+    { 
+        FREE_MASS(file_info.original_text);
+        FREE_MASS(array_to_sort);
+        return DATA_NOT_GET;
+    }
 
-    FILE* result = fopen(OUTPUT_FILE_NAME, "a");
-    if (result == NULL) { fclose(result); perror("File not open"); return FILE_NOT_OPEN; }
+    FILE* result = fopen(OUTPUT_FILE_NAME, "w");
+    if (result == NULL) 
+    { 
+        FREE_MASS(file_info.original_text);
+        FREE_MASS(array_to_sort);
+        fclose(result); 
+        perror("File not open"); 
+        return FILE_NOT_OPEN; 
+    }
+
+//-----------------------------------------------------------------------------------------------------------
 
     quick_sort(array_to_sort, file_info.count_of_strings, sizeof(StringData), compare_for_beginning_strings);
-    print_into_file(result, file_info, array_to_sort, SORT_FOR_BEGIN);
+    int res_of_print = print_into_file(result, file_info, array_to_sort, SORT_FOR_BEGIN);
+    if (res_of_print == INCORRECT_MODE_FOR_PRINT) 
+    {
+        fclose(result); 
+        FREE_MASS(file_info.original_text);
+        FREE_MASS(array_to_sort);
+        return INCORRECT_MODE_FOR_PRINT;
+    }
 
 
     qsort(array_to_sort, file_info.count_of_strings, sizeof(StringData), compare_for_end_strings);
-    print_into_file(result, file_info, array_to_sort, SORT_FOR_END);
+    res_of_print = print_into_file(result, file_info, array_to_sort, SORT_FOR_END);
+    if (res_of_print == INCORRECT_MODE_FOR_PRINT) 
+    {
+        fclose(result); 
+        FREE_MASS(file_info.original_text);
+        FREE_MASS(array_to_sort);
+        return INCORRECT_MODE_FOR_PRINT;
+    }
 
 
     qsort(array_to_sort, file_info.count_of_strings, sizeof(StringData), compare_for_indexes);
-    print_into_file(result, file_info, array_to_sort, ORIGINAL);
+    res_of_print = print_into_file(result, file_info, array_to_sort, ORIGINAL);
+    if (res_of_print == INCORRECT_MODE_FOR_PRINT) 
+    {
+        fclose(result); 
+        FREE_MASS(file_info.original_text);
+        FREE_MASS(array_to_sort);
+        return INCORRECT_MODE_FOR_PRINT;
+    }
+
+//------------------------------------------------------------------------------------------------------------
 
     fclose(result);
 

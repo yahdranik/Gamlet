@@ -18,6 +18,11 @@ size_t count_entry_in_string(char* array, char symbol)
 
 int get_string_data(StringData* data_strings, char* array, size_t len_array)
 {
+    if (data_strings == NULL || array == NULL || len_array == 0)
+    {
+        return -1;
+    }
+    
     size_t line_number = 0;
     char* begin_pointer = array;
 
@@ -33,6 +38,7 @@ int get_string_data(StringData* data_strings, char* array, size_t len_array)
             line_number += 1;
         }
     }
+
     return 0;
 }
 
